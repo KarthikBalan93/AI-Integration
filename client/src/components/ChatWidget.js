@@ -41,7 +41,23 @@ const ChatWidget = () => {
 
   const sendMessage = async () => {
     let prevMessages = messages;
-    let botMessage = await api.post('/ai/chat/message', { message: userMessage, chatId });
+    // let botMessage = await api.post('/ai/chat/message', { message: userMessage, chatId })
+    // if (!chatId) setchatId(botMessage.chatId);
+    // if (!botMessage.hasError) {
+    //   prevMessages.push({ role: 'assistant', content: botMessage.message });
+    // } else {
+    //   prevMessages.push({ role: 'assistant', content: "We are happy to hear you, unfortunately it takes longer than ususal. Please try again", hasError: true });
+    // }
+    // setisLoading(false)
+    // prevMessages = prevMessages.filter(item => !item.isLoading);
+    // setMessages(prevMessages);
+    // setUserMessage('')
+    var botMessage;
+    await api.post('/ai/chat/message', { message: userMessage, chatId }).then(res => {
+      botMessage = res
+    }).catch(err => {
+      botMessage = { hasError: true }
+    })
     if (!chatId) setchatId(botMessage.chatId);
     if (!botMessage.hasError) {
       prevMessages.push({ role: 'assistant', content: botMessage.message });
@@ -103,10 +119,10 @@ const ChatWidget = () => {
           </HStack>
           {
             messages.length ?
-              <Box 
+              <Box
                 overflowY={'auto'}
-                maxHeight={'380px'} 
-                marginBottom={50} 
+                maxHeight={'380px'}
+                marginBottom={50}
                 ref={chatBoxRef}
                 css={css`
                 overflow-y: auto;

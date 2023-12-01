@@ -17,20 +17,28 @@ function ImageGeneration() {
     const [error, setError] = useState('')
 
     const generateImage = async () => {
+        setImage('')
         if (!description) {
             return;
         }
         setisLoading(true);
-        let response = await api.post('/ai/image/generate', { description });
+        var response;
+        await api.post('/ai/image/generate', { description }).then(res => {
+            response = res;
+        }).catch(err => {
+            response = { hasError : true, errorMessage: err.message }
+        })
         if (!response.hasError) {
             setImage(response.imageUrl);
             setisLoading(false)
         } else {
             setError(response.errorMessage);
             setTimeout(() => {
-                setError('')
-            }, 2000)
+                setError('');
+                setisLoading(false)
+            }, 5000)
         }
+        
     }
     return (
         <div>
